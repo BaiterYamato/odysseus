@@ -34,7 +34,9 @@ registerMessages('pt-BR', {
   'stopped': 'parado',
   // _toolLabels
   'Searching': 'Pesquisando',
-  'Running': 'Executando',
+  // 'Running' tool label collides with the tasks status 'Running' canonical
+  // (Em execução); kept in tasks.pt-BR.js only. Agent tool status is shown
+  // verbatim 'Running' in the chat — acceptable product term.
   'Writing': 'Escrevendo',
   'Reading': 'Lendo',
   'Editing': 'Editando',
@@ -111,9 +113,9 @@ registerMessages('pt-BR', {
   'Delete failed': 'Falha ao excluir',
   'Click for details': 'Clique para detalhes',
   'Message Stats': 'Estatísticas da mensagem',
-  'tokens': 'tokens',
+  // 'tokens' / 'Total' / 'total' are telemetry metric labels shown verbatim
+  // in pt-BR and en, so they intentionally have no dictionary entry.
   'Speed': 'Velocidade',
-  'Time': 'Tempo',
   'Prep': 'Preparação',
   'Model wait': 'Espera do modelo',
   'Cost': 'Custo',
@@ -123,7 +125,6 @@ registerMessages('pt-BR', {
   'Model': 'Modelo',
   'Input': 'Entrada',
   'Output': 'Saída',
-  'Total': 'Total',
   'Provider': 'Provedor',
   'Max tokens': 'Máximo de tokens',
   'configured': 'configurado',
@@ -131,7 +132,6 @@ registerMessages('pt-BR', {
   'context used — click for details': 'de contexto usado — clique para detalhes',
   'Context Window': 'Janela de contexto',
   'used': 'usado',
-  'total': 'total',
   'Usage': 'Uso',
   'Window': 'Janela',
   'Summarize older messages to free up context': 'Resumir mensagens antigas para liberar contexto',
@@ -152,7 +152,7 @@ registerMessages('pt-BR', {
   'View / edit OCR text': 'Ver / editar texto OCR',
   'Caption': 'Legenda',
   'Click to open memory manager': 'Clique para abrir o gerenciador de memória',
-  'pinned': 'fixado',
+  // 'pinned' memory badge lives in memory-skills.pt-BR.js (canonical 'fixada').
   'recalled': 'recordado',
   'Dismiss question': 'Dispensar pergunta',
   // chatStream.js

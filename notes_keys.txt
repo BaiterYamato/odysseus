@@ -1,0 +1,164 @@
+TOTAL: 163
+#tag1 #tag2
+(untitled goal)
++ Add
++ Add item
+AI-broken-down goal
+Add a note…
+Add a to-do…
+Add text — click to cycle size
+Agent failed: {err}
+Agent is working on this todo
+Agent stream finished for this todo
+Agent working in background — tap the Agent tag when ready
+Agent working on this item — tap the Agent tag when ready
+Agent: solve this
+All
+All caught up — no pending goal steps right now.
+Archive
+Archived
+Archived {n}
+Attach photo
+Back
+Brush
+Cancel
+Circle — click to cycle size
+Clear past
+Clear photo (regular draw)
+Cleared {n} past reminder(s)
+Click to filter reminders
+Copied
+Copied {n} items
+Copy
+Copy all items
+Copy failed
+Could not create agent session
+Daily
+Day {n}
+Day {n} every month
+Default
+Delete
+Delete forever
+Delete item
+Delete permanently
+Delete reminders whose time has passed
+Delete this note?
+Delete {n} note(s)?
+Delete {n} past reminder(s)?
+Deleted
+Deleted {n}
+Description (optional)
+Doesn't repeat
+Drag
+Drag to reorder
+Draw
+Edit item
+Edit reminder
+Eraser
+Exit archive
+Failed to add item
+Failed to archive
+Failed to delete
+Failed to pin
+Failed to remove item
+Failed to save drawing
+Failed to unarchive
+Failed to update color
+Failed to update item
+Filter #{tag}
+Goal
+Goals
+Grid
+Hiding reminders — click to show only reminders
+Image upload failed
+Item...
+Last {day}
+Later today
+Line — click to cycle size
+List
+Mark done
+Mark step done
+Minimize
+Minimize notes
+Monthly
+Monthly on day {n}
+Monthly on last {day}
+Monthly on {a} {b}
+Monthly on…
+More
+More actions
+New item type
+Next step from every goal
+Next week
+No default chat model configured
+No notes
+No notes yet
+No past reminders to clear
+Note
+Note reminder
+Notes
+Nothing to solve — item is empty
+Nothing to solve — note is empty
+Nth weekday
+Nth weekday of month
+OK
+Open
+Pick date and time
+Pick week and weekday
+Pin
+Re-run agent
+Remind me
+Remind me later
+Reminders
+Remove
+Repeat
+Restored unsaved changes
+Restored unsaved note
+Run Agent
+Run again
+Save
+Save (archive)
+Save failed: {err}
+Save: {a} {b}
+Search notes…
+Select
+Select date and time
+Show notes without tags
+Show only goals
+Showing only reminders — click to show all
+Solve this todo with the agent
+Stroke color
+Stroke size
+Tag(s) — space-separated
+Take a note...
+Title
+To-do
+Today
+Today · one step per goal
+Today, {time}
+Todo
+Toggle
+Toggle view
+Tomorrow
+Tomorrow, {time}
+Unarchive
+Unarchive note
+Unarchived
+Undo
+Undo failed
+Unpin
+Update
+View archive
+Weekday
+Weekly
+Weekly on {day}s
+Weekly on…
+Which one
+Yearly
+default
+is your basic todo list, and also where reminders are managed.
+type then Enter
+{a} {b}
+{date}, {time}
+{n} Selected
+{n}th

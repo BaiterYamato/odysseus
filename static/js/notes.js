@@ -89,8 +89,8 @@ function _showNotesFirstOpenHint(pane) {
   hint.id = 'notes-first-open-hint';
   hint.className = 'tour-hint';
   hint.innerHTML = `
-    <div class="tour-hint-text"><b>Notes</b> is your basic todo list, and also where reminders are managed.</div>
-    <button type="button" class="tour-hint-dismiss">OK</button>
+    <div class="tour-hint-text"><b>${window.t('Notes')}</b> ${window.t('is your basic todo list, and also where reminders are managed.')}</div>
+    <button type="button" class="tour-hint-dismiss">${window.t('OK')}</button>
   `;
   document.body.appendChild(hint);
 
@@ -412,7 +412,7 @@ function _undoArchive(note, prevIdx) {
     const i = _notes.findIndex(n => n.id === note.id);
     if (i >= 0) _notes.splice(i, 1);
     _renderNotes();
-    uiModule.showError('Undo failed');
+    uiModule.showError(window.t('Undo failed'));
   });
 }
 
@@ -665,10 +665,10 @@ function _formatReminderTag(dateStr) {
   const tomorrow = new Date(now); tomorrow.setDate(tomorrow.getDate() + 1);
   const isTomorrow = d.toDateString() === tomorrow.toDateString();
   const time = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-  if (sameDay) return `Today, ${time}`;
-  if (isTomorrow) return `Tomorrow, ${time}`;
+  if (sameDay) return window.t('Today, {time}', { time });
+  if (isTomorrow) return window.t('Tomorrow, {time}', { time });
   const dateLabel = d.toLocaleDateString([], { month: 'short', day: 'numeric' });
-  return `${dateLabel}, ${time}`;
+  return window.t('{date}, {time}', { date: dateLabel, time });
 }
 // Build a human label for a date's nth-weekday-of-month, e.g. "2nd Tuesday"
 const _ORDINALS = ['1st', '2nd', '3rd', '4th', '5th'];
@@ -760,24 +760,25 @@ function _snapToRepeat(currentDate, normRepeat) {
 function _formatRepeatLabel(repeat, originalDate) {
   if (!repeat || repeat === 'none') return '';
   const norm = _normalizeRepeat(repeat, originalDate);
-  if (norm === 'daily') return 'Daily';
-  if (norm === 'yearly') return 'Yearly';
+  if (norm === 'daily') return window.t('Daily');
+  if (norm === 'yearly') return window.t('Yearly');
   const parts = norm.split(':');
   if (parts[0] === 'weekly') {
     const wd = parseInt(parts[1], 10);
-    if (isNaN(wd)) return 'Weekly';
-    return `Weekly on ${_DAYS[wd]}s`;
+    if (isNaN(wd)) return window.t('Weekly');
+    return window.t('Weekly on {day}s', { day: window.t(_DAYS[wd]) });
   }
   if (parts[0] === 'monthly') {
-    if (parts[1] === 'day') return `Monthly on day ${parts[2]}`;
+    if (parts[1] === 'day') return window.t('Monthly on day {n}', { n: parts[2] });
     if (parts[1] === 'nth') {
       const n = parseInt(parts[2], 10);
       const wd = parseInt(parts[3], 10);
-      return `Monthly on ${_ORDINALS[n - 1] || `${n}th`} ${_DAYS[wd]}`;
+      const ordLabel = _ORDINALS[n - 1] ? window.t(_ORDINALS[n - 1]) : window.t('{n}th', { n });
+      return window.t('Monthly on {a} {b}', { a: ordLabel, b: window.t(_DAYS[wd]) });
     }
     if (parts[1] === 'last') {
       const wd = parseInt(parts[2], 10);
-      return `Monthly on last ${_DAYS[wd]}`;
+      return window.t('Monthly on last {day}', { day: window.t(_DAYS[wd]) });
     }
   }
   return norm;
@@ -939,7 +940,7 @@ function _checkReminders() {
 }
 
 function _fireReminder(note) {
-  const title = note.title || 'Note reminder';
+  const title = note.title || window.t('Note reminder');
   // Include the verbatim note content so the email/notification actually
   // shows what to do, not just a count. Cap the per-item lines (8 max) and
   // total length so the body stays inbox-friendly.
@@ -1155,31 +1156,31 @@ export function openPanel() {
   pane.innerHTML = `
     <div class="notes-mobile-grabber" id="notes-mobile-grabber" aria-hidden="true"></div>
     <div class="notes-pane-header">
-      <h4 class="notes-pane-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2.5px;margin-right:6px"><path d="M5 3h10l4 4v14H5z"/><path d="M15 3v5h5"/><path d="M8 17.5 15.5 10l2.5 2.5L10.5 20H8z"/></svg>Notes</h4>
+      <h4 class="notes-pane-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2.5px;margin-right:6px"><path d="M5 3h10l4 4v14H5z"/><path d="M15 3v5h5"/><path d="M8 17.5 15.5 10l2.5 2.5L10.5 20H8z"/></svg>${window.t('Notes')}</h4>
       <span style="flex:1"></span>
-      <button id="notes-archive-toggle" class="doc-action-icon-btn notes-header-text-btn" title="View archive" style="opacity:0.8;gap:5px;">
+      <button id="notes-archive-toggle" class="doc-action-icon-btn notes-header-text-btn" title="${window.t('View archive')}" style="opacity:0.8;gap:5px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 002 2h12a2 2 0 002-2V8"/><path d="M10 12h4"/></svg>
-        <span class="notes-header-btn-label">Archive</span>
+        <span class="notes-header-btn-label">${window.t('Archive')}</span>
       </button>
-      <button id="notes-view-toggle" class="doc-action-icon-btn notes-header-text-btn" title="Toggle view" style="opacity:0.8;gap:5px;">
+      <button id="notes-view-toggle" class="doc-action-icon-btn notes-header-text-btn" title="${window.t('Toggle view')}" style="opacity:0.8;gap:5px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        <span class="notes-header-btn-label">Toggle</span>
+        <span class="notes-header-btn-label">${window.t('Toggle')}</span>
       </button>
-      <button id="notes-minimize-btn" class="modal-minimize-btn" title="Minimize" aria-label="Minimize notes" style="position:relative;left:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="18" x2="18" y2="18"/></svg></button>
+      <button id="notes-minimize-btn" class="modal-minimize-btn" title="${window.t('Minimize')}" aria-label="${window.t('Minimize notes')}" style="position:relative;left:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="18" x2="18" y2="18"/></svg></button>
     </div>
     <div class="notes-search-bar">
-      <input type="text" id="notes-search" class="memory-search-input" placeholder="Search notes…" autocomplete="off" />
-      <button id="notes-select-btn" class="notes-select-trigger" type="button">Select</button>
+      <input type="text" id="notes-search" class="memory-search-input" placeholder="${window.t('Search notes…')}" autocomplete="off" />
+      <button id="notes-select-btn" class="notes-select-trigger" type="button">${window.t('Select')}</button>
     </div>
     <div id="notes-bulk-bar" class="memory-bulk-bar hidden">
-      <label class="memory-bulk-check-all"><input type="checkbox" id="notes-select-all" /> All</label>
-      <span id="notes-selected-count">0 Selected</span>
+      <label class="memory-bulk-check-all"><input type="checkbox" id="notes-select-all" /> ${window.t('All')}</label>
+      <span id="notes-selected-count">${window.t('{n} Selected', { n: 0 })}</span>
       <span style="flex:1"></span>
       <button id="notes-bulk-archive" class="memory-toolbar-btn" disabled>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 002 2h12a2 2 0 002-2V8"/><path d="M10 12h4"/></svg>Archive
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 002 2h12a2 2 0 002-2V8"/><path d="M10 12h4"/></svg>${window.t('Archive')}
       </button>
       <button id="notes-bulk-delete" class="memory-toolbar-btn danger" disabled>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>Delete
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>${window.t('Delete')}
       </button>
     </div>
     <div class="notes-pane-body"></div>
@@ -1244,11 +1245,11 @@ export function openPanel() {
   // View toggle
   const archiveBtn = document.getElementById('notes-archive-toggle');
   if (archiveBtn) {
-    const ARCHIVE_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 002 2h12a2 2 0 002-2V8"/><path d="M10 12h4"/></svg><span class="notes-header-btn-label">Archive</span>';
-    const CLOSE_ICON   = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg><span class="notes-header-btn-label">Archive</span>';
+    const ARCHIVE_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 002 2h12a2 2 0 002-2V8"/><path d="M10 12h4"/></svg><span class="notes-header-btn-label">' + window.t('Archive') + '</span>';
+    const CLOSE_ICON   = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg><span class="notes-header-btn-label">' + window.t('Archive') + '</span>';
     const syncArchiveBtn = () => {
       archiveBtn.classList.toggle('active', _showingArchived);
-      archiveBtn.title = _showingArchived ? 'Exit archive' : 'View archive';
+      archiveBtn.title = _showingArchived ? window.t('Exit archive') : window.t('View archive');
       archiveBtn.style.opacity = _showingArchived ? '1' : '0.8';
       // Swap to an X while in archive view so it doubles as a close-back-
       // to-active-notes toggle.
@@ -1284,7 +1285,7 @@ export function openPanel() {
     // Label shows what you'll switch TO — "Grid" while in list, "List" while in grid.
     const _setViewLabel = () => {
       const lbl = viewBtn.querySelector('.notes-header-btn-label');
-      if (lbl) lbl.textContent = _viewMode === 'grid' ? 'List' : 'Grid';
+      if (lbl) lbl.textContent = _viewMode === 'grid' ? window.t('List') : window.t('Grid');
     };
     _setViewLabel();
     requestAnimationFrame(() => _applyMasonry(document.querySelector('#notes-pane .notes-pane-body')));
@@ -1328,20 +1329,20 @@ export function openPanel() {
     _exitSelectMode();
     await _fetchNotes();
     _renderNotes();
-    uiModule.showToast(`Archived ${ids.length}`);
+    uiModule.showToast(window.t('Archived {n}', { n: ids.length }));
   });
   document.getElementById('notes-bulk-delete').addEventListener('click', async () => {
     const ids = [..._selectedIds];
     if (!ids.length) return;
     if (uiModule && uiModule.styledConfirm) {
-      const ok = await uiModule.styledConfirm(`Delete ${ids.length} note${ids.length === 1 ? '' : 's'}?`, { confirmText: 'Delete', danger: true });
+      const ok = await uiModule.styledConfirm(window.t('Delete {n} note(s)?', { n: ids.length }), { confirmText: window.t('Delete'), danger: true });
       if (!ok) return;
     }
     await Promise.all(ids.map(id => _deleteNoteApi(id).catch(() => {})));
     _exitSelectMode();
     await _fetchNotes();
     _renderNotes();
-    uiModule.showToast(`Deleted ${ids.length}`);
+    uiModule.showToast(window.t('Deleted {n}', { n: ids.length }));
   });
   // Escape: exit select mode first (if active), otherwise close the panel.
   // Skip when the user is editing a form field — those have their own
@@ -1431,7 +1432,7 @@ function _enterSelectMode() {
   const bar = document.getElementById('notes-bulk-bar');
   const btn = document.getElementById('notes-select-btn');
   if (bar) bar.classList.remove('hidden');
-  if (btn) { btn.classList.add('active'); btn.textContent = 'Cancel'; }
+  if (btn) { btn.classList.add('active'); btn.textContent = window.t('Cancel'); }
   _renderNotes();
   _updateBulkBar();
 }
@@ -1443,7 +1444,7 @@ function _exitSelectMode() {
   const btn = document.getElementById('notes-select-btn');
   const all = document.getElementById('notes-select-all');
   if (bar) bar.classList.add('hidden');
-  if (btn) { btn.classList.remove('active'); btn.textContent = 'Select'; }
+  if (btn) { btn.classList.remove('active'); btn.textContent = window.t('Select'); }
   if (all) all.checked = false;
   _renderNotes();
 }
@@ -1454,7 +1455,7 @@ function _updateBulkBar() {
   const archiveBtn = document.getElementById('notes-bulk-archive');
   const deleteBtn = document.getElementById('notes-bulk-delete');
   const allEl = document.getElementById('notes-select-all');
-  if (countEl) countEl.textContent = `${count} Selected`;
+  if (countEl) countEl.textContent = window.t('{n} Selected', { n: count });
   if (archiveBtn) archiveBtn.disabled = count === 0;
   if (deleteBtn) deleteBtn.disabled = count === 0;
   if (allEl) allEl.checked = _notes.length > 0 && _notes.every(n => _selectedIds.has(n.id));
@@ -1484,17 +1485,17 @@ function _isPastReminder(n) {
 async function _clearPastReminders() {
   const targets = _notes.filter(n => !n.archived && _isPastReminder(n));
   if (!targets.length) {
-    uiModule.showToast?.('No past reminders to clear');
+    uiModule.showToast?.(window.t('No past reminders to clear'));
     return;
   }
   const ok = uiModule?.styledConfirm
-    ? await uiModule.styledConfirm(`Delete ${targets.length} past reminder${targets.length === 1 ? '' : 's'}?`, { confirmText: 'Delete', danger: true })
-    : confirm(`Delete ${targets.length} past reminder${targets.length === 1 ? '' : 's'}?`);
+    ? await uiModule.styledConfirm(window.t('Delete {n} past reminder(s)?', { n: targets.length }), { confirmText: window.t('Delete'), danger: true })
+    : confirm(window.t('Delete {n} past reminder(s)?', { n: targets.length }));
   if (!ok) return;
   await Promise.all(targets.map(n => _deleteNoteApi(n.id).catch(() => {})));
   await _fetchNotes();
   _renderNotes();
-  uiModule.showToast?.(`Cleared ${targets.length} past reminder${targets.length === 1 ? '' : 's'}`);
+  uiModule.showToast?.(window.t('Cleared {n} past reminder(s)', { n: targets.length }));
 }
 
 function _renderLabels(root = document) {
@@ -1513,17 +1514,17 @@ function _renderLabels(root = document) {
   const todayCount = _notes.filter(n => n.note_type === 'goal' && !n.archived && _nextGoalStep(n)).length;
   bar.style.display = '';
   const allActive = _activeLabel === null && _activeFilter === null;
-  let html = `<button class="notes-label-chip${allActive ? ' active' : ''}" data-action="all">All</button>`;
-  html += `<button class="notes-label-chip${_activeFilter === 'default' ? ' active' : ''}" data-action="default" title="Show notes without tags">Default <span class="notes-label-chip-count">${defaultCount}</span></button>`;
+  let html = `<button class="notes-label-chip${allActive ? ' active' : ''}" data-action="all">${window.t('All')}</button>`;
+  html += `<button class="notes-label-chip${_activeFilter === 'default' ? ' active' : ''}" data-action="default" title="${window.t('Show notes without tags')}">${window.t('Default')} <span class="notes-label-chip-count">${defaultCount}</span></button>`;
   if (todayCount > 0) {
     const isOn = _activeFilter === 'today';
     const icon = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:2px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
-    html += `<button class="notes-label-chip notes-label-chip-today${isOn ? ' active' : ''}" data-action="today" title="Next step from every goal">${icon}Today <span class="notes-label-chip-count">${todayCount}</span></button>`;
+    html += `<button class="notes-label-chip notes-label-chip-today${isOn ? ' active' : ''}" data-action="today" title="${window.t('Next step from every goal')}">${icon}${window.t('Today')} <span class="notes-label-chip-count">${todayCount}</span></button>`;
   }
   if (goalCount > 0) {
     const isOn = _activeFilter === 'goals';
     const icon = '<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-1px;margin-right:2px"><path d="M12 0L14.59 8.41L23 12L14.59 15.59L12 24L9.41 15.59L1 12L9.41 8.41Z"/></svg>';
-    html += `<button class="notes-label-chip notes-label-chip-goals${isOn ? ' active' : ''}" data-action="goals" title="Show only goals">${icon}Goals <span class="notes-label-chip-count">${goalCount}</span></button>`;
+    html += `<button class="notes-label-chip notes-label-chip-goals${isOn ? ' active' : ''}" data-action="goals" title="${window.t('Show only goals')}">${icon}${window.t('Goals')} <span class="notes-label-chip-count">${goalCount}</span></button>`;
   }
   const isReminderOn = _activeFilter === 'reminders';
   const isReminderOff = _activeFilter === 'no-reminders';
@@ -1532,10 +1533,10 @@ function _renderLabels(root = document) {
     // bell-off icon
     ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:2px"><path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0 1 18 8"/><path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 0 0-9.33-5"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
     : '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:2px"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
-  html += `<button class="${reminderCls}" data-action="reminders" title="${isReminderOn ? 'Showing only reminders — click to show all' : isReminderOff ? 'Hiding reminders — click to show only reminders' : 'Click to filter reminders'}">${reminderIcon}Reminders <span class="notes-label-chip-count">${reminderCount}</span></button>`;
+  html += `<button class="${reminderCls}" data-action="reminders" title="${isReminderOn ? window.t('Showing only reminders — click to show all') : isReminderOff ? window.t('Hiding reminders — click to show only reminders') : window.t('Click to filter reminders')}">${reminderIcon}${window.t('Reminders')} <span class="notes-label-chip-count">${reminderCount}</span></button>`;
   const showingReminders = _activeFilter === 'reminders';
   if (showingReminders && pastReminderCount > 0) {
-    html += `<button class="notes-label-chip notes-label-clear-past" data-action="clear-past-reminders" title="Delete reminders whose time has passed"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Clear past <span class="notes-label-chip-count">${pastReminderCount}</span></button>`;
+    html += `<button class="notes-label-chip notes-label-clear-past" data-action="clear-past-reminders" title="${window.t('Delete reminders whose time has passed')}"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>${window.t('Clear past')} <span class="notes-label-chip-count">${pastReminderCount}</span></button>`;
   }
   for (const lbl of sortedLabels) {
     html += `<button class="notes-label-chip${_activeLabel === lbl ? ' active' : ''}" data-label="${_esc(lbl)}">#${_esc(lbl)}</button>`;
@@ -1773,12 +1774,12 @@ function _renderNotes() {
     _renderLabelsInto(body);
     _renderQuickAdd(body);
     if (sorted.length === 0) {
-      body.insertAdjacentHTML('beforeend', `<div class="notes-empty">All caught up — no pending goal steps right now.</div>`);
+      body.insertAdjacentHTML('beforeend', `<div class="notes-empty">${window.t('All caught up — no pending goal steps right now.')}</div>`);
     } else {
       let todayHtml = `<div class="notes-today-wrap">
         <div class="notes-today-header">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span>Today &middot; one step per goal</span>
+          <span>${window.t('Today · one step per goal')}</span>
         </div>
         <div class="notes-today-list">`;
       for (const note of sorted) {
@@ -1786,9 +1787,9 @@ function _renderNotes() {
         if (!next) continue;
         const progress = _goalProgress(note).trim();
         todayHtml += `<div class="notes-today-row" data-note-id="${note.id}">
-          <span class="note-check-dot" data-note-id="${note.id}" data-idx="${next.idx}" title="Mark step done"></span>
+          <span class="note-check-dot" data-note-id="${note.id}" data-idx="${next.idx}" title="${window.t('Mark step done')}"></span>
           <div class="notes-today-text">
-            <div class="notes-today-title" data-action="edit" data-note-id="${note.id}">${_esc(note.title || '(untitled goal)')}</div>
+            <div class="notes-today-title" data-action="edit" data-note-id="${note.id}">${_esc(note.title || window.t('(untitled goal)'))}</div>
             <div class="notes-today-step">${_linkify(next.item.text || '')}</div>
           </div>
           <span class="notes-today-progress">${_esc(progress)}</span>
@@ -1824,21 +1825,21 @@ function _renderNotes() {
         const agentStatus = (item.agent_status || '').toLowerCase();
         const agentDoneClass = agentStatus === 'stream_complete' ? ' is-agent-stream-complete' : '';
         const agentTitle = agentStatus === 'stream_complete'
-          ? 'Agent stream finished for this todo'
-          : (agentStatus === 'running' ? 'Agent is working on this todo' : 'Solve this todo with the agent');
+          ? window.t('Agent stream finished for this todo')
+          : (agentStatus === 'running' ? window.t('Agent is working on this todo') : window.t('Solve this todo with the agent'));
         const agentSessionAttr = item.agent_session_id ? ` data-session-id="${_attrEsc(item.agent_session_id)}"` : '';
         const agentMenuTitle = item.agent_session_title || `Agent: ${(item.text || '').slice(0, 40)}`;
         const indent = Math.min(item.indent || 0, 3);
         contentHtml += `<div class="note-checkbox${doneClass}" data-note-id="${note.id}" data-idx="${i}" style="padding-left:${indent * 16}px">
-          <span class="note-check-dot" title="Mark done"></span>
+          <span class="note-check-dot" title="${window.t('Mark done')}"></span>
           <span class="note-check-text">${_linkify(item.text)}</span>
           <button class="note-checkbox-agent${agentDoneClass}" data-note-id="${_attrEsc(note.id)}" data-idx="${i}"${agentSessionAttr} data-agent-title="${_attrEsc(agentMenuTitle)}" title="${_attrEsc(agentTitle)}">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>
           </button>
-          <button class="note-checkbox-edit" data-note-id="${note.id}" data-idx="${i}" title="Edit item">
+          <button class="note-checkbox-edit" data-note-id="${note.id}" data-idx="${i}" title="${window.t('Edit item')}">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
-          <button class="note-checkbox-rm" data-note-id="${note.id}" data-idx="${i}" title="Delete item">
+          <button class="note-checkbox-rm" data-note-id="${note.id}" data-idx="${i}" title="${window.t('Delete item')}">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>`;
@@ -1864,32 +1865,32 @@ function _renderNotes() {
       : '';
     const noteTags = _visibleNoteTags(note);
     const dueBadge = dueFmt && !_hasTimeComponent(note.due_date) ? `<span class="note-due-inline${overdue ? ' note-due-overdue' : ''}">${dueFmt}</span>` : '';
-    const colorDots = COLORS.map(c => `<span class="note-card-color-dot${_dotIsActive(c.value, note.color) ? ' active' : ''}" data-color="${c.value}" style="background:${_dotBg(c.value, note.color)}" title="${c.name || 'default'}"></span>`).join('');
+    const colorDots = COLORS.map(c => `<span class="note-card-color-dot${_dotIsActive(c.value, note.color) ? ' active' : ''}" data-color="${c.value}" style="background:${_dotBg(c.value, note.color)}" title="${window.t('default')}"></span>`).join('');
     const goalClass = note.note_type === 'goal' ? ' note-card-goal' : '';
     const reminderGlowClass = activeReminderHighlights.has(note.id) && _hasActiveReminder(note) ? ' note-card-reminder-fired-sticky' : '';
     const goalPill = note.note_type === 'goal'
-      ? `<span class="note-goal-pill" title="AI-broken-down goal">
+      ? `<span class="note-goal-pill" title="${window.t('AI-broken-down goal')}">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 8.41L23 12L14.59 15.59L12 24L9.41 15.59L1 12L9.41 8.41Z"/></svg>
-          Goal${_goalProgress(note)}
+          ${window.t('Goal')}${_goalProgress(note)}
         </span>`
       : '';
     html += `<div class="note-card${note.pinned ? ' note-card-pinned' : ''}${cc}${sel}${goalClass}${reminderGlowClass}${_selectMode ? ' note-card-selectmode' : ''}" draggable="${(_selectMode || _isNotesMobileMode()) ? 'false' : 'true'}" data-note-id="${note.id}"${cardStyle}>
       ${_selectMode ? `<input type="checkbox" class="memory-select-cb note-card-cb" data-note-id="${note.id}" ${_selectedIds.has(note.id) ? 'checked' : ''} />` : ''}
       ${goalPill}
-      <button class="note-card-pin${note.pinned ? ' active' : ''}" data-note-id="${note.id}" title="${note.pinned ? 'Unpin' : 'Pin'}">
+      <button class="note-card-pin${note.pinned ? ' active' : ''}" data-note-id="${note.id}" title="${note.pinned ? window.t('Unpin') : window.t('Pin')}">
         <svg width="16" height="16" viewBox="0 0 24 28" fill="${note.pinned ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"${note.pinned ? ' style="color:var(--accent,var(--red));"' : ''}><g transform="rotate(${note.pinned ? 0 : 45} 12 14)" style="transition:transform 0.2s ease;"><line x1="12" y1="17" x2="12" y2="27"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17z"/></g></svg>
       </button>
       ${_showingArchived
-        ? `<button class="note-card-corner-trash" data-note-id="${note.id}" title="Delete forever" aria-label="Delete forever">
+        ? `<button class="note-card-corner-trash" data-note-id="${note.id}" title="${window.t('Delete forever')}" aria-label="${window.t('Delete forever')}">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
           </button>
-          <button class="note-card-corner-unarchive" data-note-id="${note.id}" title="Unarchive" aria-label="Unarchive note">
+          <button class="note-card-corner-unarchive" data-note-id="${note.id}" title="${window.t('Unarchive')}" aria-label="${window.t('Unarchive note')}">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-5-5 5-5"/><path d="M4 9h11a5 5 0 0 1 5 5v0a5 5 0 0 1-5 5H9"/></svg>
           </button>`
-        : `<button class="note-card-done" data-note-id="${note.id}" title="Mark done" aria-label="Mark done">
+        : `<button class="note-card-done" data-note-id="${note.id}" title="${window.t('Mark done')}" aria-label="${window.t('Mark done')}">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
           </button>
-          ${_hasItems(note) ? `<button class="note-card-copy note-card-copy-corner" data-note-id="${note.id}" title="Copy all items" aria-label="Copy all items">
+          ${_hasItems(note) ? `<button class="note-card-copy note-card-copy-corner" data-note-id="${note.id}" title="${window.t('Copy all items')}" aria-label="${window.t('Copy all items')}">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>` : ''}`}
       <div class="note-card-header">
@@ -1898,30 +1899,30 @@ function _renderNotes() {
       </div>
       ${_safeImgSrc(note.image_url) ? `<img class="note-card-image" src="${_esc(_safeImgSrc(note.image_url))}" alt="" draggable="false" />` : ''}
       ${contentHtml}
-      ${_hasItems(note) ? `<div class="note-cl-quickadd"><input type="text" class="note-cl-quickadd-input" placeholder="+ Add item" data-note-id="${note.id}" /></div>` : ''}
+      ${_hasItems(note) ? `<div class="note-cl-quickadd"><input type="text" class="note-cl-quickadd-input" placeholder="${window.t('+ Add item')}" data-note-id="${note.id}" /></div>` : ''}
       ${reminderTagHtml}
-      ${noteTags.length ? `<div class="note-card-label">${noteTags.map(t => `<button type="button" class="note-card-label-chip" data-note-label-filter="${_esc(t)}" title="Filter #${_esc(t)}">#${_esc(t)}</button>`).join(' ')}</div>` : ''}
+      ${noteTags.length ? `<div class="note-card-label">${noteTags.map(t => `<button type="button" class="note-card-label-chip" data-note-label-filter="${_esc(t)}" title="${window.t('Filter #{tag}', { tag: t })}">#${_esc(t)}</button>`).join(' ')}</div>` : ''}
       <div class="note-card-actions">
         <div class="note-card-colors">${colorDots}</div>
         <span style="flex:1"></span>
         ${_showingArchived ? `
-        <button class="note-card-action note-card-delete" data-note-id="${note.id}" title="Delete permanently">
+        <button class="note-card-action note-card-delete" data-note-id="${note.id}" title="${window.t('Delete permanently')}">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
         </button>
-        <button class="note-card-action note-card-unarchive" data-note-id="${note.id}" title="Unarchive">
+        <button class="note-card-action note-card-unarchive" data-note-id="${note.id}" title="${window.t('Unarchive')}">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 10 9 10"/></svg>
         </button>` : `
         ${_hasItems(note) ? `
-        <button class="note-card-action note-card-copy" data-note-id="${note.id}" title="Copy all items">
+        <button class="note-card-action note-card-copy" data-note-id="${note.id}" title="${window.t('Copy all items')}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         </button>` : ''}
-        <button class="note-card-action note-card-archive" data-note-id="${note.id}" title="Save (archive)">
+        <button class="note-card-action note-card-archive" data-note-id="${note.id}" title="${window.t('Save (archive)')}">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
         </button>
-        <button class="note-card-action note-card-delete" data-note-id="${note.id}" title="Delete">
+        <button class="note-card-action note-card-delete" data-note-id="${note.id}" title="${window.t('Delete')}">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
-        <button class="note-card-action note-card-corner-menu" data-note-id="${note.id}" title="More" aria-label="More actions">
+        <button class="note-card-action note-card-corner-menu" data-note-id="${note.id}" title="${window.t('More')}" aria-label="${window.t('More actions')}">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>
         </button>`}
       </div>
@@ -1935,7 +1936,7 @@ function _renderNotes() {
     const next = [...body.children].filter(c => c !== existingForm);
     next.forEach(c => c.remove());
     if (sorted.length === 0) {
-      body.insertAdjacentHTML('beforeend', '<div class="notes-empty-msg">No notes <span style="vertical-align:-3px;margin-left:4px;">' + uiModule.emptyStateIcon('smiley') + '</span></div>');
+      body.insertAdjacentHTML('beforeend', '<div class="notes-empty-msg">' + window.t('No notes') + ' <span style="vertical-align:-3px;margin-left:4px;">' + uiModule.emptyStateIcon('smiley') + '</span></div>');
     } else {
       existingForm.insertAdjacentHTML('afterend', html);
     }
@@ -1944,7 +1945,7 @@ function _renderNotes() {
     _renderLabelsInto(body);
     _renderQuickAdd(body);
     if (sorted.length === 0) {
-      body.insertAdjacentHTML('beforeend', '<div class="notes-empty-msg">No notes yet <span style="vertical-align:-3px;margin-left:4px;">' + uiModule.emptyStateIcon('smiley') + '</span></div>');
+      body.insertAdjacentHTML('beforeend', '<div class="notes-empty-msg">' + window.t('No notes yet') + ' <span style="vertical-align:-3px;margin-left:4px;">' + uiModule.emptyStateIcon('smiley') + '</span></div>');
     } else {
       body.insertAdjacentHTML('beforeend', html);
     }
@@ -2074,16 +2075,16 @@ function _renderQuickAdd(body) {
   // drawing happens in the expanded form). The pill that's active steers
   // both the placeholder and the type the form opens in.
   wrap.innerHTML = `
-    <div class="notes-quick-type-seg is-todo" role="group" aria-label="New item type">
-      <button type="button" class="notes-quick-type-pill" data-type="note" aria-label="Note" aria-pressed="false" title="Note">
+    <div class="notes-quick-type-seg is-todo" role="group" aria-label="${window.t('New item type')}">
+      <button type="button" class="notes-quick-type-pill" data-type="note" aria-label="${window.t('Note')}" aria-pressed="false" title="${window.t('Note')}">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>
       </button>
-      <button type="button" class="notes-quick-type-pill active" data-type="todo" aria-label="To-do" aria-pressed="true" title="To-do">
+      <button type="button" class="notes-quick-type-pill active" data-type="todo" aria-label="${window.t('To-do')}" aria-pressed="true" title="${window.t('To-do')}">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       </button>
     </div>
-    <input type="text" class="notes-quick-input" placeholder="Add a to-do…" />
-    <button class="notes-quick-icon" data-action="photo" title="Attach photo">
+    <input type="text" class="notes-quick-input" placeholder="${window.t('Add a to-do…')}" />
+    <button class="notes-quick-icon" data-action="photo" title="${window.t('Attach photo')}">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
     </button>
   `;
@@ -2102,7 +2103,7 @@ function _renderQuickAdd(body) {
       p.classList.toggle('active', on);
       p.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
-    input.placeholder = t === 'note' ? 'Add a note…' : 'Add a to-do…';
+    input.placeholder = t === 'note' ? window.t('Add a note…') : window.t('Add a to-do…');
   };
   seg.querySelectorAll('.notes-quick-type-pill').forEach(p => {
     p.addEventListener('click', (e) => {
@@ -2254,7 +2255,7 @@ function _bindCardEvents(body) {
         note.pinned = prevPinned;
         note.sort_order = prevSortOrder;
         _renderNotes();
-        uiModule.showError('Failed to pin');
+        uiModule.showError(window.t('Failed to pin'));
       });
     });
   });
@@ -2270,7 +2271,7 @@ function _bindCardEvents(body) {
       d.style.background = _dotBg(d.dataset.color, newColor);
     });
     try { await _patchNote(id, { color: newColor || null }); const note = _notes.find(n => n.id === id); if (note) note.color = newColor; }
-    catch { uiModule.showError('Failed to update color'); }
+    catch { uiModule.showError(window.t('Failed to update color')); }
   };
   body.querySelectorAll('.note-card-color-dot').forEach(dot => {
     dot.addEventListener('click', (e) => {
@@ -2340,11 +2341,11 @@ function _bindCardEvents(body) {
       const finish = () => {
         _renderNotes();
         _patchNote(id, { archived: true }).then(() => {
-          uiModule.showToast('Archived', { duration: 6000, action: 'Undo', actionIcon: _undoIcon, onAction: undo, actionHint: 'Ctrl+Z' });
+          uiModule.showToast(window.t('Archived'), { duration: 6000, action: window.t('Undo'), actionIcon: _undoIcon, onAction: undo, actionHint: 'Ctrl+Z' });
         }).catch(() => {
           _notes.splice(idx, 0, removed);
           _renderNotes();
-          uiModule.showError('Failed to archive');
+          uiModule.showError(window.t('Failed to archive'));
         });
       };
       if (card) {
@@ -2367,10 +2368,10 @@ function _bindCardEvents(body) {
       if (idx < 0) return;
       const removed = _notes.splice(idx, 1)[0];
       _renderNotes();
-      _patchNote(id, { archived: false }).then(() => uiModule.showToast('Unarchived')).catch(() => {
+      _patchNote(id, { archived: false }).then(() => uiModule.showToast(window.t('Unarchived'))).catch(() => {
         _notes.splice(idx, 0, removed);
         _renderNotes();
-        uiModule.showError('Failed to unarchive');
+        uiModule.showError(window.t('Failed to unarchive'));
       });
     });
   });
@@ -2383,10 +2384,10 @@ function _bindCardEvents(body) {
       if (idx < 0) return;
       const removed = _notes.splice(idx, 1)[0];
       _renderNotes();
-      _deleteNoteApi(id).then(() => uiModule.showToast('Deleted')).catch(() => {
+      _deleteNoteApi(id).then(() => uiModule.showToast(window.t('Deleted'))).catch(() => {
         _notes.splice(idx, 0, removed);
         _renderNotes();
-        uiModule.showError('Failed to delete');
+        uiModule.showError(window.t('Failed to delete'));
       });
     });
   });
@@ -2418,11 +2419,11 @@ function _bindCardEvents(body) {
         _pushUndo({ label: 'archive', run: undo });
         const _undoIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polyline points="9 14 4 9 9 4"/><path d="M4 9h11a5 5 0 0 1 5 5v0a5 5 0 0 1-5 5H9"/></svg>';
         _patchNote(id, { archived: true }).then(() => {
-          uiModule.showToast('Archived', { duration: 6000, action: 'Undo', actionIcon: _undoIcon, onAction: undo, actionHint: 'Ctrl+Z' });
+          uiModule.showToast(window.t('Archived'), { duration: 6000, action: window.t('Undo'), actionIcon: _undoIcon, onAction: undo, actionHint: 'Ctrl+Z' });
         }).catch(() => {
           _notes.splice(curIdx, 0, removed);
           _renderNotes();
-          uiModule.showError('Failed to archive');
+          uiModule.showError(window.t('Failed to archive'));
         });
       };
       if (card) {
@@ -2443,10 +2444,10 @@ function _bindCardEvents(body) {
       if (idx < 0) return;
       const removed = _notes.splice(idx, 1)[0];
       _renderNotes();
-      _patchNote(id, { archived: false }).then(() => uiModule.showToast('Unarchived')).catch(() => {
+      _patchNote(id, { archived: false }).then(() => uiModule.showToast(window.t('Unarchived'))).catch(() => {
         _notes.splice(idx, 0, removed);
         _renderNotes();
-        uiModule.showError('Failed to unarchive');
+        uiModule.showError(window.t('Failed to unarchive'));
       });
     });
   });
@@ -2462,7 +2463,7 @@ function _bindCardEvents(body) {
       _deleteNoteApi(id).catch(() => {
         _notes.splice(idx, 0, removed);
         _renderNotes();
-        uiModule.showError('Failed to delete');
+        uiModule.showError(window.t('Failed to delete'));
       });
     });
   });
@@ -2486,7 +2487,7 @@ function _bindCardEvents(body) {
       const text = lines.join('\n').trim();
       try {
         await navigator.clipboard.writeText(text);
-        uiModule.showToast?.(`Copied ${(note.items || []).filter(i => (i?.text || '').trim()).length} items`);
+        uiModule.showToast?.(window.t('Copied {n} items', { n: (note.items || []).filter(i => (i?.text || '').trim()).length }));
       } catch {
         // Fallback for browsers blocking the async API
         const ta = document.createElement('textarea');
@@ -2494,8 +2495,8 @@ function _bindCardEvents(body) {
         ta.style.position = 'fixed'; ta.style.left = '-9999px';
         document.body.appendChild(ta);
         ta.select();
-        try { document.execCommand('copy'); uiModule.showToast?.('Copied'); }
-        catch { uiModule.showError?.('Copy failed'); }
+        try { document.execCommand('copy'); uiModule.showToast?.(window.t('Copied')); }
+        catch { uiModule.showError?.(window.t('Copy failed')); }
         ta.remove();
       }
     });
@@ -2516,7 +2517,7 @@ function _bindCardEvents(body) {
       _patchNote(noteId, { items: note.items }).catch(() => {
         note.items.splice(idx, 0, removed);
         _renderNotes();
-        uiModule.showError('Failed to remove item');
+        uiModule.showError(window.t('Failed to remove item'));
       });
     });
   });
@@ -2559,7 +2560,7 @@ function _bindCardEvents(body) {
         if (!newText) note.items.splice(idx, 0, oldItem);
         else note.items[idx].text = oldText;
         _renderNotes();
-        uiModule.showError('Failed to update item');
+        uiModule.showError(window.t('Failed to update item'));
       });
       _renderNotes();
     };
@@ -2637,7 +2638,7 @@ function _bindCardEvents(body) {
       _patchNote(noteId, { items }).catch(() => {
         note.items = items.slice(0, -1);
         _renderNotes();
-        uiModule.showError('Failed to add item');
+        uiModule.showError(window.t('Failed to add item'));
       });
     });
   });
@@ -2923,17 +2924,17 @@ function _buildForm(note = null) {
   let currentImageUrl = _safeImgSrc(note?.image_url || '');
   form.innerHTML = `
     <div class="note-form-header">
-      <input type="text" class="note-form-title" placeholder="Title" value="${_esc(note?.title || '')}" />
-      <button type="button" class="note-form-icon-btn note-form-remind-btn${note?.due_date ? ' has-date' : ''}" title="Remind me">
+      <input type="text" class="note-form-title" placeholder="${window.t('Title')}" value="${_esc(note?.title || '')}" />
+      <button type="button" class="note-form-icon-btn note-form-remind-btn${note?.due_date ? ' has-date' : ''}" title="${window.t('Remind me')}">
         <svg width="31" height="31" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       </button>
       <input type="hidden" class="note-form-due" value="${note?.due_date || ''}" />
       <input type="hidden" class="note-form-repeat" value="${note?.repeat || 'none'}" />
     </div>
-    ${currentImageUrl && type !== 'draw' ? `<div class="note-form-image-wrap"><img class="note-form-image" src="${_esc(currentImageUrl)}" draggable="false" /><button class="note-form-image-rm" title="Remove">&times;</button></div>` : ''}
+      ${currentImageUrl && type !== 'draw' ? `<div class="note-form-image-wrap"><img class="note-form-image" src="${_esc(currentImageUrl)}" draggable="false" /><button class="note-form-image-rm" title="${window.t('Remove')}">&times;</button></div>` : ''}
     <div class="note-form-body">
       ${type === 'note'
-        ? `<textarea class="note-form-content" placeholder="Take a note..." rows="4">${_esc(note?.content || '')}</textarea>`
+        ? `<textarea class="note-form-content" placeholder="${window.t('Take a note...')}" rows="4">${_esc(note?.content || '')}</textarea>`
         : type === 'draw'
         ? _buildDrawHtml()
         : type === 'goal'
@@ -2945,40 +2946,40 @@ function _buildForm(note = null) {
       <div class="note-form-type-seg${type === 'todo' ? ' is-todo' : type === 'draw' ? ' is-draw' : ''}" role="group">
         <button type="button" class="note-form-type-pill${type === 'note' ? ' active' : ''}" data-type="note">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>
-          <span>Note</span>
+          <span>${window.t('Note')}</span>
         </button>
         <button type="button" class="note-form-type-pill${type === 'todo' ? ' active' : ''}" data-type="todo">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          <span>Todo</span>
+          <span>${window.t('Todo')}</span>
         </button>
         <button type="button" class="note-form-type-pill${type === 'draw' ? ' active' : ''}" data-type="draw">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-          <span>Draw</span>
+          <span>${window.t('Draw')}</span>
         </button>
       </div>
-      <button class="note-form-photo-btn" title="Attach photo">
+      <button class="note-form-photo-btn" title="${window.t('Attach photo')}">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       </button>
       <input type="file" class="note-form-photo-input" accept="image/*" capture="environment" style="display:none" />
       <div class="note-color-picker">
-        ${COLORS.map(c => `<span class="note-color-dot${_dotIsActive(c.value, color) ? ' active' : ''}" data-color="${c.value}" style="background:${_dotBg(c.value, color)}" title="${c.name || 'default'}"></span>`).join('')}
+        ${COLORS.map(c => `<span class="note-color-dot${_dotIsActive(c.value, color) ? ' active' : ''}" data-color="${c.value}" style="background:${_dotBg(c.value, color)}" title="${c.name ? window.t(c.name) : window.t('default')}"></span>`).join('')}
       </div>
-      <input type="text" class="note-form-label" value="${_esc(note?.label || '')}" placeholder="#tag1 #tag2" title="Tag(s) — space-separated" />
+      <input type="text" class="note-form-label" value="${_esc(note?.label || '')}" placeholder="${window.t('#tag1 #tag2')}" title="${window.t('Tag(s) — space-separated')}" />
       <div class="note-form-actions-group">
         ${isEdit ? `
-        <button type="button" class="note-form-text-btn note-form-archive-btn note-form-collapsible" title="Archive">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 002 2h12a2 2 0 002-2V8"/><path d="M10 12h4"/></svg><span class="nft-label">Archive</span>
+        <button type="button" class="note-form-text-btn note-form-archive-btn note-form-collapsible" title="${window.t('Archive')}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 002 2h12a2 2 0 002-2V8"/><path d="M10 12h4"/></svg><span class="nft-label">${window.t('Archive')}</span>
         </button>
-        <button type="button" class="note-form-text-btn note-form-delete-btn note-form-collapsible danger" title="Delete">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg><span class="nft-label">Delete</span>
+        <button type="button" class="note-form-text-btn note-form-delete-btn note-form-collapsible danger" title="${window.t('Delete')}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg><span class="nft-label">${window.t('Delete')}</span>
         </button>
         ` : ''}
         <span class="note-form-actions-spacer"></span>
-        <button class="note-form-cancel note-form-text-btn note-form-collapsible" title="Cancel">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg><span class="nft-label">Cancel</span>
+        <button class="note-form-cancel note-form-text-btn note-form-collapsible" title="${window.t('Cancel')}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg><span class="nft-label">${window.t('Cancel')}</span>
         </button>
-        <button class="note-form-save note-form-text-btn" title="${isEdit ? 'Update' : 'Save'}">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span class="nft-label">${isEdit ? 'Update' : 'Save'}</span>
+        <button class="note-form-save note-form-text-btn" title="${isEdit ? window.t('Update') : window.t('Save')}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span class="nft-label">${isEdit ? window.t('Update') : window.t('Save')}</span>
         </button>
       </div>
     </div>
@@ -3060,7 +3061,7 @@ function _buildForm(note = null) {
           ? _stashedNoteText
           : (_stashedGoalDesc && _stashedGoalDesc)
           || (_stashedTodoItems || _stashedGoalItems || []).map(i => i.text).join('\n');
-        bodyEl.innerHTML = `<textarea class="note-form-content" placeholder="Take a note..." rows="4">${_esc(text)}</textarea>`;
+        bodyEl.innerHTML = `<textarea class="note-form-content" placeholder="${window.t('Take a note...')}" rows="4">${_esc(text)}</textarea>`;
         _wireHashtag(bodyEl.querySelector('.note-form-content'));
       }
       const focusEl = newType === 'note'
@@ -3186,10 +3187,10 @@ function _buildForm(note = null) {
     if (!v) { tagsEl.innerHTML = ''; return; }
     const label = _formatReminderTag(v);
     const repLabel = rep !== 'none' ? ` · ${_formatRepeatLabel(rep, new Date(v))}` : '';
-    tagsEl.innerHTML = `<button class="note-reminder-tag" type="button" title="Edit reminder">
+    tagsEl.innerHTML = `<button class="note-reminder-tag" type="button" title="${window.t('Edit reminder')}">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       <span>${_esc(label)}${_esc(repLabel)}</span>
-      <span class="note-reminder-tag-x" title="Remove">×</span>
+      <span class="note-reminder-tag-x" title="${window.t('Remove')}">×</span>
     </button>`;
     tagsEl.querySelector('.note-reminder-tag').addEventListener('click', (e) => {
       if (e.target.classList.contains('note-reminder-tag-x')) {
@@ -3210,10 +3211,10 @@ function _buildForm(note = null) {
     document.body.appendChild(menu);
 
     const presetItems = [
-      { label: 'Later today', sub: _laterTodayDate().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }), action: () => _setReminder(_toLocalDatetimeStr(_laterTodayDate())) },
-      { label: 'Tomorrow', sub: _tomorrowDate().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }), action: () => _setReminder(_toLocalDatetimeStr(_tomorrowDate())) },
-      { label: 'Next week', sub: _nextWeekDate().toLocaleDateString([], { weekday: 'short' }) + ' ' + _nextWeekDate().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }), action: () => _setReminder(_toLocalDatetimeStr(_nextWeekDate())) },
-      { label: 'Select date and time', sub: '', action: () => _pickCustomDate() },
+      { label: window.t('Later today'), sub: _laterTodayDate().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }), action: () => _setReminder(_toLocalDatetimeStr(_laterTodayDate())) },
+      { label: window.t('Tomorrow'), sub: _tomorrowDate().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }), action: () => _setReminder(_toLocalDatetimeStr(_tomorrowDate())) },
+      { label: window.t('Next week'), sub: _nextWeekDate().toLocaleDateString([], { weekday: 'short' }) + ' ' + _nextWeekDate().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }), action: () => _setReminder(_toLocalDatetimeStr(_nextWeekDate())) },
+      { label: window.t('Select date and time'), sub: '', action: () => _pickCustomDate() },
     ];
 
     // Sub-page state for the repeat picker. null = top page.
@@ -3272,7 +3273,7 @@ function _buildForm(note = null) {
       let html = '';
 
       if (subMode === null) {
-        html += '<div class="note-reminder-menu-title">Remind me later</div>';
+        html += '<div class="note-reminder-menu-title">' + window.t('Remind me later') + '</div>';
         for (let i = 0; i < presetItems.length; i++) {
           const it = presetItems[i];
           html += `<button class="note-reminder-menu-item" data-action="preset" data-i="${i}"><span>${it.label}</span><span class="note-reminder-menu-sub">${it.sub}</span></button>`;
@@ -3280,72 +3281,72 @@ function _buildForm(note = null) {
         if (isEdit && dueInput.value) {
           const norm = getNorm();
           html += '<div class="note-reminder-menu-divider"></div>';
-          html += '<div class="note-reminder-menu-title">Repeat</div>';
+          html += '<div class="note-reminder-menu-title">' + window.t('Repeat') + '</div>';
           // None
-          html += `<button class="note-reminder-menu-item${norm === 'none' ? ' active' : ''}" data-action="set" data-val="none"><span>Doesn't repeat</span>${norm === 'none' ? '<span class="note-reminder-menu-check">✓</span>' : ''}</button>`;
+          html += `<button class="note-reminder-menu-item${norm === 'none' ? ' active' : ''}" data-action="set" data-val="none"><span>${window.t("Doesn't repeat")}</span>${norm === 'none' ? '<span class="note-reminder-menu-check">✓</span>' : ''}</button>`;
           // Daily
-          html += `<button class="note-reminder-menu-item${norm === 'daily' ? ' active' : ''}" data-action="set" data-val="daily"><span>Daily</span>${norm === 'daily' ? '<span class="note-reminder-menu-check">✓</span>' : ''}</button>`;
+          html += `<button class="note-reminder-menu-item${norm === 'daily' ? ' active' : ''}" data-action="set" data-val="daily"><span>${window.t('Daily')}</span>${norm === 'daily' ? '<span class="note-reminder-menu-check">✓</span>' : ''}</button>`;
           // Weekly →
           {
             const isW = norm.startsWith('weekly:');
             const wd = isW ? parseInt(norm.split(':')[1], 10) : null;
-            const sub = isW && !isNaN(wd) ? `<span class="note-reminder-menu-sub">${_DAYS[wd]}</span>` : '';
-            html += `<button class="note-reminder-menu-item${isW ? ' active' : ''}" data-action="sub" data-sub="weekly"><span>Weekly</span>${sub}<span class="note-reminder-menu-arrow">›</span></button>`;
+            const sub = isW && !isNaN(wd) ? `<span class="note-reminder-menu-sub">${_esc(window.t(_DAYS[wd]))}</span>` : '';
+            html += `<button class="note-reminder-menu-item${isW ? ' active' : ''}" data-action="sub" data-sub="weekly"><span>${window.t('Weekly')}</span>${sub}<span class="note-reminder-menu-arrow">›</span></button>`;
           }
           // Monthly →
           {
             const isM = norm.startsWith('monthly:');
-            const sub = isM ? `<span class="note-reminder-menu-sub">${_monthlyShortDescriptor(norm)}</span>` : '';
-            html += `<button class="note-reminder-menu-item${isM ? ' active' : ''}" data-action="sub" data-sub="monthly"><span>Monthly</span>${sub}<span class="note-reminder-menu-arrow">›</span></button>`;
+            const sub = isM ? `<span class="note-reminder-menu-sub">${_esc(_monthlyShortDescriptor(norm))}</span>` : '';
+            html += `<button class="note-reminder-menu-item${isM ? ' active' : ''}" data-action="sub" data-sub="monthly"><span>${window.t('Monthly')}</span>${sub}<span class="note-reminder-menu-arrow">›</span></button>`;
           }
           // Yearly
-          html += `<button class="note-reminder-menu-item${norm === 'yearly' ? ' active' : ''}" data-action="set" data-val="yearly"><span>Yearly</span>${norm === 'yearly' ? '<span class="note-reminder-menu-check">✓</span>' : ''}</button>`;
+          html += `<button class="note-reminder-menu-item${norm === 'yearly' ? ' active' : ''}" data-action="set" data-val="yearly"><span>${window.t('Yearly')}</span>${norm === 'yearly' ? '<span class="note-reminder-menu-check">✓</span>' : ''}</button>`;
         }
       } else if (subMode === 'weekly') {
         const norm = getNorm();
         const curWd = norm.startsWith('weekly:') ? parseInt(norm.split(':')[1], 10) : -1;
-        html += `<button class="note-reminder-menu-back" data-action="back"><span class="note-reminder-menu-arrow-back">‹</span> Repeat</button>`;
-        html += '<div class="note-reminder-menu-title">Weekly on…</div>';
+        html += `<button class="note-reminder-menu-back" data-action="back"><span class="note-reminder-menu-arrow-back">‹</span> ${window.t('Repeat')}</button>`;
+        html += '<div class="note-reminder-menu-title">' + window.t('Weekly on…') + '</div>';
         html += '<div class="note-reminder-weekday-row">';
         for (let i = 0; i < 7; i++) {
-          html += `<button class="note-reminder-day-chip${curWd === i ? ' active' : ''}" data-action="weekly-pick" data-wd="${i}" title="${_DAYS[i]}">${DAY_SHORT[i]}</button>`;
+          html += `<button class="note-reminder-day-chip${curWd === i ? ' active' : ''}" data-action="weekly-pick" data-wd="${i}" title="${_esc(window.t(_DAYS[i]))}">${DAY_SHORT[i]}</button>`;
         }
         html += '</div>';
       } else if (subMode === 'monthly') {
         const norm = getNorm();
         const dueDate = new Date(dueInput.value);
         const dayN = dueDate.getDate();
-        html += `<button class="note-reminder-menu-back" data-action="back"><span class="note-reminder-menu-arrow-back">‹</span> Repeat</button>`;
-        html += '<div class="note-reminder-menu-title">Monthly on…</div>';
+        html += `<button class="note-reminder-menu-back" data-action="back"><span class="note-reminder-menu-arrow-back">‹</span> ${window.t('Repeat')}</button>`;
+        html += '<div class="note-reminder-menu-title">' + window.t('Monthly on…') + '</div>';
         // Day N — uses the chosen date's day. Always offered.
         const dayVal = `monthly:day:${dayN}`;
-        html += `<button class="note-reminder-menu-item${norm === dayVal ? ' active' : ''}" data-action="set" data-val="${dayVal}"><span>Day ${dayN} every month</span>${norm === dayVal ? '<span class="note-reminder-menu-check">✓</span>' : ''}</button>`;
+        html += `<button class="note-reminder-menu-item${norm === dayVal ? ' active' : ''}" data-action="set" data-val="${dayVal}"><span>${window.t('Day {n} every month', { n: dayN })}</span>${norm === dayVal ? '<span class="note-reminder-menu-check">✓</span>' : ''}</button>`;
         // Nth weekday →
         {
           const isNth = norm.startsWith('monthly:nth:');
-          const sub = isNth ? `<span class="note-reminder-menu-sub">${_monthlyShortDescriptor(norm)}</span>` : '';
-          html += `<button class="note-reminder-menu-item${isNth ? ' active' : ''}" data-action="sub" data-sub="monthly_nth"><span>Nth weekday</span>${sub}<span class="note-reminder-menu-arrow">›</span></button>`;
+          const sub = isNth ? `<span class="note-reminder-menu-sub">${_esc(_monthlyShortDescriptor(norm))}</span>` : '';
+          html += `<button class="note-reminder-menu-item${isNth ? ' active' : ''}" data-action="sub" data-sub="monthly_nth"><span>${window.t('Nth weekday')}</span>${sub}<span class="note-reminder-menu-arrow">›</span></button>`;
         }
       } else if (subMode === 'monthly_nth') {
         // Pick ordinal (1..4) and weekday (0..6); commit when both chosen.
-        html += `<button class="note-reminder-menu-back" data-action="back-monthly"><span class="note-reminder-menu-arrow-back">‹</span> Monthly</button>`;
-        html += '<div class="note-reminder-menu-title">Nth weekday of month</div>';
-        html += '<div class="note-reminder-menu-sublabel">Which one</div>';
+        html += `<button class="note-reminder-menu-back" data-action="back-monthly"><span class="note-reminder-menu-arrow-back">‹</span> ${window.t('Monthly')}</button>`;
+        html += '<div class="note-reminder-menu-title">' + window.t('Nth weekday of month') + '</div>';
+        html += '<div class="note-reminder-menu-sublabel">' + window.t('Which one') + '</div>';
         html += '<div class="note-reminder-weekday-row">';
         for (let i = 1; i <= 4; i++) {
-          html += `<button class="note-reminder-day-chip wide${nthDraft.n === i ? ' active' : ''}" data-action="nth-n" data-n="${i}">${_ORDINALS[i - 1]}</button>`;
+          html += `<button class="note-reminder-day-chip wide${nthDraft.n === i ? ' active' : ''}" data-action="nth-n" data-n="${i}">${_esc(window.t(_ORDINALS[i - 1]))}</button>`;
         }
         html += '</div>';
-        html += '<div class="note-reminder-menu-sublabel">Weekday</div>';
+        html += '<div class="note-reminder-menu-sublabel">' + window.t('Weekday') + '</div>';
         html += '<div class="note-reminder-weekday-row">';
         for (let i = 0; i < 7; i++) {
-          html += `<button class="note-reminder-day-chip${nthDraft.w === i ? ' active' : ''}" data-action="nth-w" data-wd="${i}" title="${_DAYS[i]}">${DAY_SHORT[i]}</button>`;
+          html += `<button class="note-reminder-day-chip${nthDraft.w === i ? ' active' : ''}" data-action="nth-w" data-wd="${i}" title="${_esc(window.t(_DAYS[i]))}">${DAY_SHORT[i]}</button>`;
         }
         html += '</div>';
         html += '<div class="note-reminder-menu-divider"></div>';
         const ready = nthDraft.n > 0 && nthDraft.w >= 0;
-        const lbl = ready ? `Save: ${_ORDINALS[nthDraft.n - 1]} ${_DAYS[nthDraft.w]}` : 'Pick week and weekday';
-        html += `<button class="note-reminder-menu-item note-reminder-menu-confirm${ready ? '' : ' disabled'}" data-action="nth-save" ${ready ? '' : 'disabled'}><span>${lbl}</span></button>`;
+        const lbl = ready ? window.t('Save: {a} {b}', { a: window.t(_ORDINALS[nthDraft.n - 1]), b: window.t(_DAYS[nthDraft.w]) }) : window.t('Pick week and weekday');
+        html += `<button class="note-reminder-menu-item note-reminder-menu-confirm${ready ? '' : ' disabled'}" data-action="nth-save" ${ready ? '' : 'disabled'}><span>${_esc(lbl)}</span></button>`;
       }
 
       menu.innerHTML = html;
@@ -3410,15 +3411,16 @@ function _buildForm(note = null) {
 
   function _monthlyShortDescriptor(norm) {
     const parts = norm.split(':');
-    if (parts[1] === 'day') return `Day ${parts[2]}`;
+    if (parts[1] === 'day') return window.t('Day {n}', { n: parts[2] });
     if (parts[1] === 'nth') {
       const n = parseInt(parts[2], 10);
       const wd = parseInt(parts[3], 10);
-      return `${_ORDINALS[n - 1] || `${n}th`} ${_DAYS[wd].slice(0, 3)}`;
+      const ordLabel = _ORDINALS[n - 1] ? window.t(_ORDINALS[n - 1]) : window.t('{n}th', { n });
+      return window.t('{a} {b}', { a: ordLabel, b: window.t(_DAYS[wd]).slice(0, 3) });
     }
     if (parts[1] === 'last') {
       const wd = parseInt(parts[2], 10);
-      return `Last ${_DAYS[wd].slice(0, 3)}`;
+      return window.t('Last {day}', { day: window.t(_DAYS[wd]).slice(0, 3) });
     }
     return '';
   }
@@ -3448,13 +3450,13 @@ function _buildForm(note = null) {
     menu.className = 'note-reminder-menu';
     const initial = dueInput.value || _toLocalDatetimeStr(_tomorrowDate());
     menu.innerHTML = `
-      <div class="note-reminder-menu-title">Pick date and time</div>
+      <div class="note-reminder-menu-title">${window.t('Pick date and time')}</div>
       <div class="note-reminder-menu-picker">
         <input type="datetime-local" class="note-reminder-date-input" value="${initial}" />
       </div>
       <div class="note-reminder-menu-divider"></div>
       <button class="note-reminder-menu-item note-reminder-menu-confirm">
-        <span>Save</span>
+        <span>${window.t('Save')}</span>
       </button>
     `;
     document.body.appendChild(menu);
@@ -3509,14 +3511,14 @@ function _buildForm(note = null) {
         form.querySelector('.note-form-image-wrap')?.remove();
         const wrap = document.createElement('div');
         wrap.className = 'note-form-image-wrap';
-        wrap.innerHTML = `<img class="note-form-image" draggable="false" /><button class="note-form-image-rm" title="Remove">&times;</button>`;
+        wrap.innerHTML = `<img class="note-form-image" draggable="false" /><button class="note-form-image-rm" title="${window.t('Remove')}">&times;</button>`;
         // Insert AFTER the whole header (a flex-row), not after the
         // title input itself — otherwise the image lands as a sibling
         // of the title inside the header and flex puts them side-by-side.
         form.querySelector('.note-form-header').after(wrap);
         wrap.querySelector('.note-form-image-rm').addEventListener('click', () => { wrap.remove(); currentImageUrl = ''; });
         wrap.querySelector('img').src = currentImageUrl;
-      } catch (err) { uiModule.showError('Image upload failed'); }
+      } catch (err) { uiModule.showError(window.t('Image upload failed')); }
       photoInput.value = '';
     });
   }
@@ -3643,7 +3645,7 @@ function _buildForm(note = null) {
       // can't be re-rendered later without the URL.
       const canvas = form.querySelector('.note-form-canvas');
       const url = await _uploadCanvasAsPng(canvas);
-      if (!url) { uiModule.showError('Failed to save drawing'); return; }
+      if (!url) { uiModule.showError(window.t('Failed to save drawing')); return; }
       payload.image_url = url;
     } else if (currentType === 'goal') {
       // Legacy: existing goal-type notes still edit through this branch.
@@ -3701,7 +3703,7 @@ function _buildForm(note = null) {
         _renderNotes();
       }
     }).catch(err => {
-      uiModule.showError('Save failed: ' + err.message);
+      uiModule.showError(window.t('Save failed: {err}', { err: err.message }));
       _fetchNotes().then(() => _renderNotes());
     });
     } finally {
@@ -3719,14 +3721,14 @@ function _buildForm(note = null) {
     const _saveLabelEl = _saveBtnEl0.querySelector('.nft-label');
     const _enterArchive = () => {
       _saveBtnEl0.classList.add('archive-mode');
-      if (_saveLabelEl) _saveLabelEl.textContent = 'Archive';
-      _saveBtnEl0.title = 'Archive';
+      if (_saveLabelEl) _saveLabelEl.textContent = window.t('Archive');
+      _saveBtnEl0.title = window.t('Archive');
     };
     const _enterUpdate = () => {
       if (!_saveBtnEl0.classList.contains('archive-mode')) return;
       _saveBtnEl0.classList.remove('archive-mode');
-      if (_saveLabelEl) _saveLabelEl.textContent = 'Update';
-      _saveBtnEl0.title = 'Update';
+      if (_saveLabelEl) _saveLabelEl.textContent = window.t('Update');
+      _saveBtnEl0.title = window.t('Update');
     };
     _enterArchive();
     form.addEventListener('input', _enterUpdate, true);
@@ -3749,28 +3751,28 @@ function _buildForm(note = null) {
     _pushUndo({ label: 'archive', run: undo });
     const _undoIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polyline points="9 14 4 9 9 4"/><path d="M4 9h11a5 5 0 0 1 5 5v0a5 5 0 0 1-5 5H9"/></svg>';
     _patchNote(id, { archived: true }).then(() => {
-      uiModule.showToast('Archived', { duration: 6000, action: 'Undo', actionIcon: _undoIcon, onAction: undo, actionHint: 'Ctrl+Z' });
+      uiModule.showToast(window.t('Archived'), { duration: 6000, action: window.t('Undo'), actionIcon: _undoIcon, onAction: undo, actionHint: 'Ctrl+Z' });
     }).catch(() => {
       _notes.splice(idx, 0, removed);
       _renderNotes();
-      uiModule.showError('Failed to archive');
+      uiModule.showError(window.t('Failed to archive'));
     });
   });
   form.querySelector('.note-form-delete-btn')?.addEventListener('click', async () => {
     if (!isEdit) return;
     const id = note.id;
     if (uiModule.styledConfirm) {
-      const ok = await uiModule.styledConfirm('Delete this note?', { confirmText: 'Delete', danger: true });
+      const ok = await uiModule.styledConfirm(window.t('Delete this note?'), { confirmText: window.t('Delete'), danger: true });
       if (!ok) return;
-    } else if (!confirm('Delete this note?')) {
+    } else if (!confirm(window.t('Delete this note?'))) {
       return;
     }
     const idx = _notes.findIndex(n => n.id === id);
     if (idx >= 0) _notes.splice(idx, 1);
     _editingId = null;
     _renderNotes();
-    _deleteNoteApi(id).then(() => uiModule.showToast('Deleted')).catch(() => {
-      uiModule.showError('Failed to delete');
+    _deleteNoteApi(id).then(() => uiModule.showToast(window.t('Deleted'))).catch(() => {
+      uiModule.showError(window.t('Failed to delete'));
       _fetchNotes().then(() => _renderNotes());
     });
   });
@@ -3790,7 +3792,7 @@ function _buildGoalHtml(note, items) {
   const desc = (note?.content || '').toString();
   return `
     <div class="note-form-goal">
-      <textarea class="note-form-goal-desc" placeholder="Description (optional)" rows="3">${_esc(desc)}</textarea>
+      <textarea class="note-form-goal-desc" placeholder="${window.t('Description (optional)')}" rows="3">${_esc(desc)}</textarea>
       ${_buildChecklistHtml(items)}
     </div>
   `;
@@ -3833,16 +3835,16 @@ function _buildChecklistHtml(items) {
   for (const item of items) {
     const indent = Math.min(item.indent || 0, 3);
     html += `<div class="note-cl-row${item.done ? ' done' : ''}" draggable="true" data-item-id="${item.id || _uid()}" data-indent="${indent}" style="padding-left:${indent * 16}px">
-      <span class="note-cl-grip" title="Drag to reorder">⋮⋮</span>
+      <span class="note-cl-grip" title="${window.t('Drag to reorder')}">⋮⋮</span>
       <span class="note-cl-dot"></span>
-      <input type="text" class="note-cl-text" value="${_esc(item.text)}" placeholder="Item..." />
+      <input type="text" class="note-cl-text" value="${_esc(item.text)}" placeholder="${window.t('Item...')}" />
       <button type="button" class="note-cl-rm">&times;</button>
     </div>`;
   }
   // `type="button"` matters on mobile — without it some browsers treat
   // bare <button> as form-submit and the click handler never fires inside
   // certain containers. Also bumped tap target so fingers don't miss.
-  html += `<button type="button" class="note-cl-add">+ Add</button></div>`;
+  html += `<button type="button" class="note-cl-add">${window.t('+ Add')}</button></div>`;
   return html;
 }
 
@@ -3914,7 +3916,7 @@ function _wireChecklist(container) {
       row.draggable = true;
       row.dataset.itemId = _uid();
       row.dataset.indent = '0';
-      row.innerHTML = `<span class="note-cl-grip" title="Drag">⋮⋮</span><span class="note-cl-dot"></span><input type="text" class="note-cl-text" placeholder="Item..." /><button type="button" class="note-cl-rm">&times;</button>`;
+      row.innerHTML = `<span class="note-cl-grip" title="${window.t('Drag')}">⋮⋮</span><span class="note-cl-dot"></span><input type="text" class="note-cl-text" placeholder="${window.t('Item...')}" /><button type="button" class="note-cl-rm">&times;</button>`;
       inputs.insertBefore(row, addBtn);
       row.querySelector('.note-cl-text').focus();
       _wireRow(row, container);
@@ -3972,28 +3974,28 @@ function _buildDrawHtml() {
     <div class="note-form-draw-wrap">
       <canvas class="note-form-canvas" width="600" height="320"></canvas>
       <div class="note-form-draw-toolbar">
-        <input type="color" class="note-form-draw-color" title="Stroke color" value="#222222" />
-        <label class="note-form-draw-tool note-form-draw-size-wrap" title="Stroke size">
+        <input type="color" class="note-form-draw-color" title="${window.t('Stroke color')}" value="#222222" />
+        <label class="note-form-draw-tool note-form-draw-size-wrap" title="${window.t('Stroke size')}">
           <input type="range" class="note-form-draw-size" min="1" max="24" value="3" />
         </label>
         <div class="note-form-draw-be" role="group">
-          <button type="button" class="note-form-draw-be-btn note-form-draw-brush active" data-mode="pen" title="Brush">
+          <button type="button" class="note-form-draw-be-btn note-form-draw-brush active" data-mode="pen" title="${window.t('Brush')}">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.06 11.9l8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04 0-1.67-1.34-3.02-3-3.02z"/></svg>
           </button>
-          <button type="button" class="note-form-draw-be-btn note-form-draw-eraser" data-mode="eraser" title="Eraser">
+          <button type="button" class="note-form-draw-be-btn note-form-draw-eraser" data-mode="eraser" title="${window.t('Eraser')}">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>
           </button>
         </div>
-        <button type="button" class="note-form-draw-text" title="Add text — click to cycle size">T<span class="note-form-draw-text-badge"></span></button>
-        <button type="button" class="note-form-draw-line" title="Line — click to cycle size">
+        <button type="button" class="note-form-draw-text" title="${window.t('Add text — click to cycle size')}">T<span class="note-form-draw-text-badge"></span></button>
+        <button type="button" class="note-form-draw-line" title="${window.t('Line — click to cycle size')}">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="4"/></svg>
           <span class="note-form-draw-shape-badge"></span>
         </button>
-        <button type="button" class="note-form-draw-circle" title="Circle — click to cycle size">
+        <button type="button" class="note-form-draw-circle" title="${window.t('Circle — click to cycle size')}">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
           <span class="note-form-draw-shape-badge"></span>
         </button>
-        <button type="button" class="note-form-draw-undo" title="Undo">
+        <button type="button" class="note-form-draw-undo" title="${window.t('Undo')}">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M4 9h11a5 5 0 0 1 5 5v0a5 5 0 0 1-5 5H9"/></svg>
         </button>
       </div>
@@ -4045,7 +4047,7 @@ function _wireCanvas(container, initialImageUrl) {
       const rm = document.createElement('button');
       rm.type = 'button';
       rm.className = 'note-form-draw-bg-rm';
-      rm.title = 'Clear photo (regular draw)';
+      rm.title = window.t('Clear photo (regular draw)');
       rm.innerHTML = '&times;';
       rm.addEventListener('click', (e) => {
         e.preventDefault();
@@ -4167,7 +4169,7 @@ function _wireCanvas(container, initialImageUrl) {
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'note-form-draw-textinput';
-    input.placeholder = 'type then Enter';
+    input.placeholder = window.t('type then Enter');
     const color = colorInput?.value || '#222';
     const maxW = Math.max(120, Math.floor(r.width - px - 4));
     input.style.cssText = [
@@ -4369,7 +4371,7 @@ function _createNote(type = 'todo') {
   form.classList.add('note-form-new');
   body.prepend(form);
   form.querySelector('.note-form-title').focus();
-  if (restored) uiModule.showToast('Restored unsaved note');
+  if (restored) uiModule.showToast(window.t('Restored unsaved note'));
 }
 
 // Build the plain-text/markdown form of a note for clipboard copy.
@@ -4400,11 +4402,11 @@ function _openNoteCornerMenu(btn) {
   menu.innerHTML = `
     <button type="button" class="ncm-item" data-act="copy">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-      <span>Copy</span>
+      <span>${window.t('Copy')}</span>
     </button>
     <button type="button" class="ncm-item" data-act="agent">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>
-      <span>${note.agent_session_id ? 'Re-run agent' : 'Agent: solve this'}</span>
+      <span>${note.agent_session_id ? window.t('Re-run agent') : window.t('Agent: solve this')}</span>
     </button>`;
   document.body.appendChild(menu);
   const r = btn.getBoundingClientRect();
@@ -4450,11 +4452,11 @@ function _openTodoAgentMenu(btn) {
   menu.innerHTML = `
     ${sid ? `<button type="button" class="ncm-item" data-act="open">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-      <span>Open</span>
+      <span>${window.t('Open')}</span>
     </button>` : ''}
     <button type="button" class="ncm-item" data-act="run">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>
-      <span>${sid ? 'Run again' : 'Run Agent'}</span>
+      <span>${sid ? window.t('Run again') : window.t('Run Agent')}</span>
     </button>`;
   _positionNoteMenu(menu, btn);
   const openBtn = menu.querySelector('[data-act="open"]');
@@ -4492,10 +4494,10 @@ async function _agentSolveNote(id) {
   const note = _notes.find(n => n.id === id);
   if (!note) return;
   const prompt = _noteToAgentPrompt(note);
-  if (!prompt) { uiModule.showToast('Nothing to solve — note is empty'); return; }
+  if (!prompt) { uiModule.showToast(window.t('Nothing to solve — note is empty')); return; }
   try {
     const dc = await (await fetch(`${API_BASE}/api/default-chat`, { credentials: 'same-origin' })).json();
-    if (!dc.endpoint_url || !dc.model) { uiModule.showError('No default chat model configured'); return; }
+    if (!dc.endpoint_url || !dc.model) { uiModule.showError(window.t('No default chat model configured')); return; }
 
     // 1. Create the session server-side (no UI switch). skip_validation
     //    avoids re-probing — the default-chat endpoint is already known good.
@@ -4507,7 +4509,7 @@ async function _agentSolveNote(id) {
     if (dc.endpoint_id) csFd.append('endpoint_id', dc.endpoint_id);
     csFd.append('skip_validation', 'true');
     const csRes = await fetch(`${API_BASE}/api/session`, { method: 'POST', credentials: 'same-origin', body: csFd });
-    if (!csRes.ok) { uiModule.showError('Could not create agent session'); return; }
+    if (!csRes.ok) { uiModule.showError(window.t('Could not create agent session')); return; }
     const sess = await csRes.json();
     const sid = sess.id;
 
@@ -4537,9 +4539,9 @@ async function _agentSolveNote(id) {
       })
       .catch(() => {});
 
-    uiModule.showToast('Agent working in background — tap the Agent tag when ready');
+    uiModule.showToast(window.t('Agent working in background — tap the Agent tag when ready'));
   } catch (e) {
-    uiModule.showError('Agent failed: ' + (e.message || e));
+    uiModule.showError(window.t('Agent failed: {err}', { err: (e.message || e) }));
   }
 }
 
@@ -4554,7 +4556,7 @@ async function _agentSolveTodoItem(noteId, idx) {
   const item = note.items[idx];
   const itemText = (item && (item.text || '').trim()) || '';
   if (!itemText) {
-    uiModule.showToast('Nothing to solve — item is empty');
+    uiModule.showToast(window.t('Nothing to solve — item is empty'));
     return;
   }
   const titleCtx = (note.title || '').trim();
@@ -4563,7 +4565,7 @@ async function _agentSolveTodoItem(noteId, idx) {
     : `Help me with this todo: ${itemText}\n\nThe source note is read-only. Do not edit, replace, or update it.`;
   try {
     const dc = await (await fetch(`${API_BASE}/api/default-chat`, { credentials: 'same-origin' })).json();
-    if (!dc.endpoint_url || !dc.model) { uiModule.showError('No default chat model configured'); return; }
+    if (!dc.endpoint_url || !dc.model) { uiModule.showError(window.t('No default chat model configured')); return; }
 
     const label = itemText.slice(0, 40);
     const csFd = new FormData();
@@ -4573,7 +4575,7 @@ async function _agentSolveTodoItem(noteId, idx) {
     if (dc.endpoint_id) csFd.append('endpoint_id', dc.endpoint_id);
     csFd.append('skip_validation', 'true');
     const csRes = await fetch(`${API_BASE}/api/session`, { method: 'POST', credentials: 'same-origin', body: csFd });
-    if (!csRes.ok) { uiModule.showError('Could not create agent session'); return; }
+    if (!csRes.ok) { uiModule.showError(window.t('Could not create agent session')); return; }
     const sess = await csRes.json();
     const sid = sess.id;
     const sessionTitle = 'Agent: ' + label;
@@ -4617,9 +4619,9 @@ async function _agentSolveTodoItem(noteId, idx) {
       })
       .catch(() => {});
 
-    uiModule.showToast('Agent working on this item — tap the Agent tag when ready');
+    uiModule.showToast(window.t('Agent working on this item — tap the Agent tag when ready'));
   } catch (e) {
-    uiModule.showError('Agent failed: ' + (e.message || e));
+    uiModule.showError(window.t('Agent failed: {err}', { err: (e.message || e) }));
   }
 }
 
@@ -4653,9 +4655,9 @@ async function _copyNote(noteId, btnEl) {
         btnEl._copyFlashing = false;
       }, 1200);
     }
-    uiModule.showToast?.('Copied');
+    uiModule.showToast?.(window.t('Copied'));
   } else {
-    uiModule.showError?.('Copy failed');
+    uiModule.showError?.(window.t('Copy failed'));
   }
   return ok;
 }
@@ -4671,7 +4673,7 @@ function _editNote(id) {
   const { note: _n, restored } = _applyDraftToNote(note, id);
   const form = _buildForm(_n);
   card.replaceWith(form);
-  if (restored) uiModule.showToast('Restored unsaved changes');
+  if (restored) uiModule.showToast(window.t('Restored unsaved changes'));
   // Pinned notes live in the first masonry column — the edit form has
   // column-span:all, which can leave the form rendered above the fold or
   // visually buried under neighboring pinned cards. Bring it into view
@@ -4718,10 +4720,10 @@ function _editNote(id) {
 
 async function _deleteNote(id) {
   const ok = uiModule?.styledConfirm
-    ? await uiModule.styledConfirm('Delete this note?', { confirmText: 'Delete', danger: true })
-    : confirm('Delete this note?');
+    ? await uiModule.styledConfirm(window.t('Delete this note?'), { confirmText: window.t('Delete'), danger: true })
+    : confirm(window.t('Delete this note?'));
   if (!ok) return;
-  try { await _deleteNoteApi(id); await _fetchNotes(); _renderNotes(); uiModule.showToast('Deleted'); }
+  try { await _deleteNoteApi(id); await _fetchNotes(); _renderNotes(); uiModule.showToast(window.t('Deleted')); }
   catch (err) { uiModule.showError(err.message); }
 }
 
@@ -4753,7 +4755,7 @@ function _openMobileFullscreenEdit(id, fromCard) {
   overlay.className = 'note-fullscreen-overlay';
   overlay.innerHTML = `
     <div class="note-fullscreen-header">
-      <button type="button" class="note-fullscreen-back" title="Back">
+      <button type="button" class="note-fullscreen-back" title="${window.t('Back')}">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
       </button>
       <div class="note-fullscreen-actions"></div>
@@ -4766,7 +4768,7 @@ function _openMobileFullscreenEdit(id, fromCard) {
   const { note: _n, restored } = _applyDraftToNote(note, id);
   const form = _buildForm(_n);
   body.appendChild(form);
-  if (restored) uiModule.showToast('Restored unsaved changes');
+  if (restored) uiModule.showToast(window.t('Restored unsaved changes'));
   document.body.appendChild(overlay);
   _mobileFsOverlay = overlay;
 
@@ -4895,7 +4897,7 @@ function _openMobileFullscreenEdit(id, fromCard) {
       newRow.draggable = true;
       newRow.dataset.itemId = _uid();
       newRow.dataset.indent = '0';
-      newRow.innerHTML = '<span class="note-cl-grip" title="Drag">⋮⋮</span><span class="note-cl-dot"></span><input type="text" class="note-cl-text" placeholder="Item..." /><button type="button" class="note-cl-rm">&times;</button>';
+      newRow.innerHTML = '<span class="note-cl-grip" title="' + window.t('Drag') + '">⋮⋮</span><span class="note-cl-dot"></span><input type="text" class="note-cl-text" placeholder="' + window.t('Item...') + '" /><button type="button" class="note-cl-rm">&times;</button>';
       inputs.insertBefore(newRow, addRow);
       _wireRow(newRow, inputs);
       // Touch reorder on the freshly-added row's grip.

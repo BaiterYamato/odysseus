@@ -18,8 +18,8 @@ registerMessages('pt-BR', {
 
   // --- _scheduleLabel ---
   'Every {n} {evtName}{s}': 'A cada {n} {evtName}{s}',
-  'Webhook': 'Webhook',
-  'Cron: {expr}': 'Cron: {expr}',
+  // 'Webhook' and 'Cron: {expr}' are schedule-type/technical terms shown
+  // verbatim in pt-BR and en, so they intentionally have no dictionary entry.
   'Once on {date} at {time}': 'Uma vez em {date} às {time}',
   'Once': 'Uma vez',
   'Daily at {localTime}': 'Diariamente às {localTime}',
@@ -63,12 +63,12 @@ registerMessages('pt-BR', {
   'Task stopped': 'Tarefa interrompida',
   'Task triggered': 'Tarefa iniciada',
   'Task triggered in parallel': 'Tarefa iniciada em paralelo',
-  'Reverted to default': 'Restaurado ao padrão',
+  'Reverted to default': 'Revertido ao padrão',
 
   // --- confirms ---
   'Delete this task and all its run history?': 'Excluir esta tarefa e todo o histórico de execuções?',
-  'Revert this built-in task to its default schedule and settings?': 'Restaurar esta tarefa integrada ao agendamento e configurações padrão?',
-  'Revert': 'Restaurar',
+  'Revert this built-in task to its default schedule and settings?': 'Reverter esta tarefa integrada para o agendamento e configurações padrão?',
+  'Revert': 'Reverter',
   'Revert this built-in task to its default?': 'Restaurar esta tarefa integrada ao padrão?',
   'Clear cached {label} for this task?': 'Limpar o cache de {label} para esta tarefa?',
   'Clear': 'Limpar',
@@ -134,8 +134,8 @@ registerMessages('pt-BR', {
   'What should be researched?': 'O que deve ser pesquisado?',
   'What should the AI do?': 'O que a IA deve fazer?',
   'Research question': 'Questão de pesquisa',
-  'Prompt': 'Prompt',
-  'Persona': 'Persona',
+  // 'Prompt' / 'Persona' are AI product terms shown verbatim in pt-BR and en,
+  // so they intentionally have no dictionary entry.
   '(optional — biases the output voice)': '(opcional — influencia o estilo de resposta)',
   'Action': 'Ação',
   'Email triage rules': 'Regras de triagem de e-mail',
@@ -166,8 +166,8 @@ registerMessages('pt-BR', {
   'Pause all active tasks': 'Pausar todas as tarefas ativas',
   'Sort tasks': 'Ordenar tarefas',
   'Recent': 'Recentes',
-  'A–Z': 'A–Z',
-  'Status': 'Status',
+  // 'A–Z' sort option and 'Status' filter label are shown verbatim in pt-BR
+  // and en, so they intentionally have no dictionary entry.
   'Select tasks': 'Selecionar tarefas',
   'Select': 'Selecionar',
   'Search tasks...': 'Pesquisar tarefas...',

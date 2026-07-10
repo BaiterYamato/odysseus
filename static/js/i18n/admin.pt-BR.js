@@ -47,7 +47,7 @@ registerMessages('pt-BR', {
   'None': 'Nenhum',
   'no models': 'sem modelos',
   '{n}/{total} models enabled': '{n}/{total} modelos habilitados',
-  'offline': 'offline',
+  // 'offline' status keyword — shown verbatim (see note above), no entry.
   'disabled': 'desabilitado',
   'Click to manage models': 'Clique para gerenciar modelos',
   'Disable': 'Desabilitar',
@@ -66,8 +66,8 @@ registerMessages('pt-BR', {
   'Failed to load': 'Falha ao carregar',
   'Online — no models found': 'Online — nenhum modelo encontrado',
   'Online — found {n} model(s)': 'Online — encontrado(s) {n} modelo(s)',
-  'Offline — {error}': 'Offline — {error}',
-  'Offline': 'Offline',
+  // 'offline' / 'Offline' / 'Offline — {error}' are status keywords shown verbatim in
+  // pt-BR and en, so they intentionally have no dictionary entry (t() returns the key).
   'Select a provider or enter a base URL': 'Selecione um provedor ou insira uma URL base',
   'API key is required for cloud providers': 'Chave de API obrigatória para provedores em nuvem',
   'Testing...': 'Testando...',

@@ -18,7 +18,7 @@ registerMessages('pt-BR', {
   // ---- memory.js — select mode ----
   'Cancel': 'Cancelar',
   'Select': 'Selecionar',
-  '{n} Selected': '{n} selecionado(s)',
+  '{n} Selected': '{n} selecionada(s)',
 
   // ---- memory.js — bulk delete ----
   'Delete {n} {noun}?': 'Excluir {n} {noun}?',
@@ -48,7 +48,7 @@ registerMessages('pt-BR', {
 
   // ---- memory.js — tidy ----
   'Tidy': 'Organizar',
-  'Already clean': 'Já está limpo',
+  'Already clean': 'Já está tudo organizado',
   'Tidying memories': 'Organizando memórias',
   'Tidied: {removed} removed ({before} → {after})': 'Organizado: {removed} removido(s) ({before} → {after})',
   'Tidy failed — check console': 'Falha ao organizar — verifique o console',
@@ -60,8 +60,8 @@ registerMessages('pt-BR', {
 
   // ---- memory.js — memory item badges ----
   'pinned': 'fixada',
-  'auto': 'auto',
-  'manual': 'manual',
+  // 'auto' / 'manual' are memory-origin mode badges shown verbatim in pt-BR
+  // and en, so they intentionally have no dictionary entry.
   'Injected into chat context {n} time{s}': 'Injetada no contexto do chat {n} vez{s}',
 
   // ---- memory.js — memory item actions ----
@@ -158,8 +158,8 @@ registerMessages('pt-BR', {
   'Delete {n} {skills}? This removes their SKILL.md files.': 'Excluir {n} {skills}? Isso remove os arquivos SKILL.md.',
   'Delete {n} selected non-passing {skills}? This removes duplicates, generic/irrelevant skills, failed audits, and anything below {pct}%.':
     'Excluir {n} {skills} não aprovada(s) selecionada(s)? Remove duplicatas, skills genéricas/irrelevantes, auditorias com falha e qualquer coisa abaixo de {pct}%.',
-  'skill': 'skill',
-  'skills': 'skills',
+  // 'skill' / 'skills' are product terms shown verbatim in pt-BR and en,
+  // so they intentionally have no dictionary entry.
   'Delete non passing': 'Excluir não aprovadas',
   'Revert "{name}" to its original built-in instructions?': 'Reverter "{name}" para as instruções integradas originais?',
   'Revert': 'Reverter',
